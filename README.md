@@ -35,25 +35,27 @@ alsk1369854/go-auth-reverse-proxy:0.0.0
 go run main.go -port=80 -proxy=http://localhost:8080 -auth=auth-tokens.json
 ```
 
-### Docker image
-
-#### Build
+### Docker image build and push
 
 ```bash
-docker build -t go-auth-reverse-proxy:0.0.0 -f deployments/Dockerfile .
-```
-
-#### Push to DockerHub
-
-```bash
+# image values
 export tag=0.0.0
 export docker_account=alsk1369854
+export image_name=go-auth-reverse-proxy
 
+# login
 docker login
 
-docker tag go-auth-reverse-proxy:${tag} ${docker_account}/go-auth-reverse-proxy:${tag}
+# build
+docker build -t ${docker_account}/${image_name}:${tag} .
+docker tag ${docker_account}/${image_name}:${tag} ${docker_account}/${image_name}:latest
 
-docker push ${docker_account}/go-auth-reverse-proxy:${tag}
+# push to docker hub
+docker push ${docker_account}/${image_name}:${tag}
+docker push ${docker_account}/${image_name}:latest
+
+# clear
+docker rmi ${docker_account}/${image_name}:${tag} ${docker_account}/${image_name}:latest
 ```
 
 ## Generate JWT
