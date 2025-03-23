@@ -24,9 +24,3 @@ func CreateProxy(target string) *httputil.ReverseProxy {
 
 	return proxy
 }
-
-// ===== HTTP → HTTPS 重導函式 =====
-func RedirectToHTTPS(w http.ResponseWriter, r *http.Request) {
-	target := "https://" + r.Host + r.URL.RequestURI()
-	http.Redirect(w, r, target, http.StatusMovedPermanently)
-}

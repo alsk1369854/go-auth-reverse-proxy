@@ -20,7 +20,7 @@ FROM debian:bookworm-slim
 # 複製執行檔與 JSON 檔
 WORKDIR /app
 COPY --from=builder /app/app .
-COPY auth-tokens.json .
+COPY data/ .
 
 # 設定預設 port
 EXPOSE 80
@@ -28,4 +28,4 @@ EXPOSE 80
 # 預設執行 command，可被 docker run 時覆寫
 ENV PROXY_URL=http://host.docker.internal:8080
 
-CMD ["sh", "-c", "./app -port=80 -proxy=${PROXY_URL} -auth=auth-tokens.json"]
+CMD ["sh", "-c", "./app -port=80 -proxy=${PROXY_URL} -auth=./data/auth-tokens.json"]

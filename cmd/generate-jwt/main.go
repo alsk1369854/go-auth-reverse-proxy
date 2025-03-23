@@ -3,21 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
+	"go-auth-reverse-proxy/internal/pkg/utils"
 	"log"
 	"os"
-	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
 var (
-	username string
-	secretKey []byte
+	name string
+	secretKey string
 )
 
 func init() {
-	flag.StringVar(&username, "username", "admin", "Username of Token")
+	flag.StringVar(&name, "name", "admin", "Name of Token")
 	flag.Parse()
 
 	// 載入 .env 檔案
@@ -25,22 +24,11 @@ func init() {
 		log.Fatal("Unable to load .env file")
 	}
 
-	secretKey = []byte(os.Getenv("JWT_SECRET"))
-}
-
-func generateJWT(username string) (string, error) {
-	claims := jwt.MapClaims{
-		"username": username,
-		"iat":      time.Now().Unix(),                   // 發行時間
-		// "exp":      time.Now().Add(time.Hour * 1).Unix(), // 過期時間
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(secretKey)
+	secretKey = os.Getenv("JWT_SECRET")
 }
 
 func main(){
-	token, err  := generateJWT(username); if err != nil{
+	token, err  := utils.GenerateJWT(name, secretKey); if err != nil{
 		log.Fatalf("GenerateJWT Error %v\n", err)
 	}
 	fmt.Println(token)

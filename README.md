@@ -14,17 +14,70 @@ go-auth-reverse-proxy 是一款使用 Go 語言實作的輕量級 具授權驗�
 
 - 📜 提供簡易 JWT 生成工具
 
-## Deploy
+## Quick Start
 
-### Docker
+### Setting Tokens
 
 ```bash
+cat data/auth-tokens.json
+```
+
+### Generate a new Token
+
+```bash
+# Create Secret Key
+echo JWT_SECRET=$(openssl rand -base64 32) > .env
+
+# Generate token
+go run cmd/generate-jwt/main.go -name=<token_name>
+```
+
+## Deploy on Docker
+
+### Windows(PowerShell)
+
+```powershell
+# http 80 port -> auth -> http 8080 port
+docker run -d `
+--name go-auth-reverse-proxy `
+-p 80:80 `
+-e PROXY_URL=http://host.docker.internal:8080 `
+-v "${PWD}/data:/app/data" `
+--restart unless-stopped `
+alsk1369854/go-auth-reverse-proxy
+```
+
+### MacOS
+
+```bash
+# http 80 port -> auth -> http 8080 port
 docker run -d \
---name my-go-auth-reverse-proxy \
+--name go-auth-reverse-proxy \
 -p 80:80 \
 -e PROXY_URL=http://host.docker.internal:8080 \
+-v "$(pwd)/data:/app/data" \
 --restart unless-stopped \
-alsk1369854/go-auth-reverse-proxy:0.0.0
+alsk1369854/go-auth-reverse-proxy
+```
+
+### Linux
+
+```bash
+# http 80 port -> auth -> http 8080 port
+docker run -d \
+--name go-auth-reverse-proxy \
+--network=host \
+-e PROXY_URL=http://localhost:8080 \
+-v "$(pwd)/data:/app/data" \
+--restart unless-stopped \
+alsk1369854/go-auth-reverse-proxy
+
+```
+
+## Track System logs
+
+```bash
+docker logs -f go-auth-reverse-proxy
 ```
 
 ## Dev
@@ -32,14 +85,45 @@ alsk1369854/go-auth-reverse-proxy:0.0.0
 ### Run app
 
 ```bash
-go run main.go -port=80 -proxy=http://localhost:8080 -auth=auth-tokens.json
+go run main.go -port=80 -proxy=http://localhost:8080 -auth=./data/auth-tokens.json
 ```
 
-### Docker image build and push
+### Test Proxy
+
+#### Create Test Server
+
+```bash
+docker run -d \
+--name py-test-server \
+-p 8080:80 \
+--restart unless-stopped \
+alsk1369854/py-test-server
+```
+
+#### Test API
+
+```bash
+# set token
+export token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI3NDQ4NzAsIm5hbWUiOiJhZG1pbiJ9.dnn3Cl8LwJh7fFuLufARoz1evzEBKf9Gfr3n1hHDgN0
+
+# test api 1
+curl -H "Authorization: Bearer $token" http://localhost/
+# Respond {"message":"Hello world"}
+
+# test api 2
+curl -H "Authorization: Bearer $token" http://localhost/user
+# Respond {"message":"User"}
+
+# test api 3
+curl -H "Authorization: Bearer $token" http://localhost/user/1
+# Respond {"message":"User 1"}
+```
+
+## Docker image build and push
 
 ```bash
 # image values
-export tag=0.0.0
+export tag=0.0.1
 export docker_account=alsk1369854
 export image_name=go-auth-reverse-proxy
 
@@ -56,39 +140,4 @@ docker push ${docker_account}/${image_name}:latest
 
 # clear
 docker rmi ${docker_account}/${image_name}:${tag} ${docker_account}/${image_name}:latest
-```
-
-## Generate JWT
-
-```bash
-# Create Secret Key
-echo JWT_SECRET=$(openssl rand -base64 32) > .env
-
-# Generate token
-go run cmd/generate-jwt/main.go -username=your_username
-```
-
-## Test Proxy
-
-### Create Test Server Container
-
-```bash
-docker run -d \
---name py-test-server \
--p 8080:80 \
---restart unless-stopped \
-alsk1369854/py-test-server
-```
-
-### Test API list
-
-```bash
-curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI2MTQ1NDAsInVzZXJuYW1lIjoic2RwbWxhYiJ9.eIj96Wpa3yYVK_CDIOk3CM8K8EoEQEpdiF0YKu_TQac" http://localhost/
-# Respond {"message":"Hello world"}
-
-curl -H "Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI2MTQ1NjIsInVzZXJuYW1lIjoidGVtcDEifQ.ZBIzEGKlry5kug4ZVx_KZSJfwHU8YaIRElhNRfxnKAo" http://localhost/user
-# Respond {"message":"User"}
-
-curl -H "Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI2MTQ1NjIsInVzZXJuYW1lIjoidGVtcDEifQ.ZBIzEGKlry5kug4ZVx_KZSJfwHU8YaIRElhNRfxnKAo" http://localhost/user/1
-# Respond {"message":"User 1"}
 ```

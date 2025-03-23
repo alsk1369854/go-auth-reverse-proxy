@@ -22,12 +22,6 @@ func ReadAuthTokenFile(path string) ([]models.AuthToken, error) {
 
 	return tokens, nil
 
-	// // 建立 map：token 為 key
-	// tokenMap := make(map[string]AuthToken)
-	// for _, t := range tokens {
-	// 	tokenMap[t.Token] = t
-	// }
-
 	// // 測試印出
 	// for token, info := range tokenMap {
 	// 	fmt.Printf("Token: %s\nUser: %s\n\n", token, info.Username)

@@ -1,5 +1,5 @@
 ### Usage
 
 ```bash
-go run cmd/generate-jwt/main.go -username=<your_username>
+go run cmd/generate-jwt/main.go -name=<token_name>
 ```

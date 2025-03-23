@@ -23,7 +23,6 @@ var (
 	// secretKey []byte
 )
 
-
 func getIPAddress(r *http.Request) string {
 	// 支援經過反向代理（例如 Nginx）
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
@@ -37,14 +36,13 @@ func getIPAddress(r *http.Request) string {
 	return ip
 }
 
-
 // 驗證 Token 的簡單邏輯（可改成從 DB 查詢或 JWT 驗證）
 func isAuthorized(r *http.Request) bool {
 	authHeader := r.Header.Get("Authorization")
 	token := strings.TrimPrefix(authHeader, "Bearer ")
 	val, exist := authMap[token]
 	if exist {
-		log.Printf("[AUTH] Pass username: %s\n", val.Username)
+		log.Printf("[AUTH] Pass name: %s\n", val.Name)
 	} else {
 		ip := getIPAddress(r)
 		destination := r.URL.String()
@@ -91,10 +89,6 @@ func init() {
 	for _, t := range tokens {
 		authMap[t.Token] = t
 	}
-	// // 測試印出
-	// for token, info := range authMap {
-	// 	fmt.Printf("Token: %s\nUser: %s\n\n", token, info.Username)
-	// }
 }
 
 

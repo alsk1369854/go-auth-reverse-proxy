@@ -1,0 +1,17 @@
+[
+  {
+    "name": "admin",
+    "description": "default token 1",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI3NDQ4NzAsIm5hbWUiOiJhZG1pbiJ9.dnn3Cl8LwJh7fFuLufARoz1evzEBKf9Gfr3n1hHDgN0"
+  },
+  {
+    "name": "user1",
+    "description": "default token 2",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI3NDQ4OTUsIm5hbWUiOiJ1c2VyMSJ9.IGc2yivw1r4Eenk5cRvvMxEVduh-eb9_nSMaE1L-6Qc"
+  },
+  {
+    "name": "user2",
+    "description": "default token 3",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDI3NDQ5MTIsIm5hbWUiOiJ1c2VyMiJ9.m0U8v_HDtoKgI-IZmcPGM6wFBsuh1df5ZVLz5DlCB5o"
+  }
+]
