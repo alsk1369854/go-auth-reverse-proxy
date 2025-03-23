@@ -52,7 +52,7 @@ alsk1369854/go-auth-reverse-proxy
 ```bash
 # http 80 port -> auth -> http 8080 port
 docker run -d \
---name go-auth-reverse-proxy \
+--name auth-proxy-80-to-8080 \
 -p 80:80 \
 -e PROXY_URL=http://host.docker.internal:8080 \
 -v "$(pwd)/data:/app/data" \
@@ -65,19 +65,18 @@ alsk1369854/go-auth-reverse-proxy
 ```bash
 # http 80 port -> auth -> http 8080 port
 docker run -d \
---name go-auth-reverse-proxy \
+--name auth-proxy-80-to-8080 \
 --network=host \
 -e PROXY_URL=http://localhost:8080 \
 -v "$(pwd)/data:/app/data" \
 --restart unless-stopped \
 alsk1369854/go-auth-reverse-proxy
-
 ```
 
 ## Track System logs
 
 ```bash
-docker logs -f go-auth-reverse-proxy
+docker logs -f auth-proxy-80-to-8080
 ```
 
 ## Dev
@@ -131,7 +130,7 @@ export image_name=go-auth-reverse-proxy
 docker login
 
 # build
-docker build -t ${docker_account}/${image_name}:${tag} .
+docker build -f deployments/Dockerfile -t ${docker_account}/${image_name}:${tag} .
 docker tag ${docker_account}/${image_name}:${tag} ${docker_account}/${image_name}:latest
 
 # push to docker hub
